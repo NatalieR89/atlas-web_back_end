@@ -7,4 +7,5 @@ function taskFirst() {
     let task = 'But sometimes let is better.';
     return task;
   }
-  
+
+  module.exports = { taskFirst, taskNext };
