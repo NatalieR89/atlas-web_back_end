@@ -10,6 +10,7 @@ from typing import Union
 module = import_module("1-concurrent_coroutines")
 wait_n = module.wait_n
 
+
 def measure_time(n: int, max_delay: int) -> float:
     """
     Measures the total execution time for wait_n(n, max_delay) and returns
