@@ -7,6 +7,8 @@ import random
 from typing import Generator
 
 def async_generator() -> Generator[float, None, None]:
-    """Generator that yields 10 random numbers."""
+    """
+    Generator that yields 10 random numbers.
+    """
     for _ in range(10):
         yield random.uniform(0, 10)
