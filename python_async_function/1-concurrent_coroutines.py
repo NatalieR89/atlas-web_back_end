@@ -2,9 +2,12 @@
 """Concurrent coroutines example: wait_n coroutine using wait_random."""
 
 import asyncio
-from basic_async_syntax import wait_random  # Correct import
-
+import importlib
 from typing import List
+
+# Dynamically import the previous file
+module = importlib.import_module("0-basic_async_syntax")
+wait_random = module.wait_random
 
 async def wait_n(n: int, max_delay: int) -> List[float]:
     """Spawn wait_random n times with max_delay and return delays in order of completion."""
@@ -12,7 +15,6 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
     results: List[float] = []
 
     for task in asyncio.as_completed(tasks):
-        delay = await task
-        results.append(delay)
+        results.append(await task)
 
     return results
