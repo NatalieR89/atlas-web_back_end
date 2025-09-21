@@ -27,7 +27,6 @@ class MRUCache(BaseCaching):
             mru_key, _ = self.cache_data.popitem(last=True)
             print(f"DISCARD: {mru_key}")
 
-
         self.cache_data[key] = item
 
     def get(self, key):
