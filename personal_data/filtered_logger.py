@@ -2,13 +2,17 @@
 """
 filtered_logger module.
 
-Provides utilities to redact sensitive fields in logs and a logging formatter
-that automatically applies the redaction.
+Provides utilities to redact sensitive fields in logs, create a logger with
+redaction enabled, and connect securely to a database using environment
+variables.
 """
 
 import logging
+import os
 from typing import List
-from filtered_logger import filter_datum  # reusing your earlier function
+import mysql.connector
+from mysql.connector.connection import MySQLConnection
+from filtered_logger import filter_datum  # reuse your earlier function
 
 
 class RedactingFormatter(logging.Formatter):
@@ -45,3 +49,18 @@ def get_logger() -> logging.Logger:
     logger.addHandler(stream_handler)
 
     return logger
+
+
+def get_db() -> MySQLConnection:
+    """Return a MySQL database connection using environment variables."""
+    username = os.getenv("PERSONAL_DATA_DB_USERNAME", "root")
+    password = os.getenv("PERSONAL_DATA_DB_PASSWORD", "")
+    host = os.getenv("PERSONAL_DATA_DB_HOST", "localhost")
+    db_name = os.getenv("PERSONAL_DATA_DB_NAME")
+
+    return mysql.connector.connect(
+        user=username,
+        password=password,
+        host=host,
+        database=db_name
+    )
