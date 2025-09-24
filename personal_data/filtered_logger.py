@@ -3,8 +3,9 @@
 filtered_logger module.
 
 Provides utilities to redact sensitive fields in logs, create a logger with
-redaction enabled, and connect securely to a database using environment
-variables.
+redaction enabled, connect securely to a database using environment
+variables, and a main function to display user records with sensitive data
+redacted.
 """
 
 import logging
@@ -12,11 +13,11 @@ import os
 from typing import List
 import mysql.connector
 from mysql.connector.connection import MySQLConnection
-from filtered_logger import filter_datum  # reuse your earlier function
+from filtered_logger import filter_datum  # assume filter_datum is defined in same project
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class that obfuscates sensitive fields in log messages. """
+    """Redacting Formatter class that obfuscates sensitive fields in log messages."""
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
@@ -64,3 +65,27 @@ def get_db() -> MySQLConnection:
         host=host,
         database=db_name
     )
+
+
+def main() -> None:
+    """Obtain a DB connection, retrieve all users, and log each row with redaction."""
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT name, email, phone, ssn, password, ip, last_login, user_agent FROM users;")
+
+    logger = get_logger()
+    for row in cursor:
+        # format the row into a single log string
+        message = (
+            f"name={row[0]}; email={row[1]}; phone={row[2]}; "
+            f"ssn={row[3]}; password={row[4]}; ip={row[5]}; "
+            f"last_login={row[6]}; user_agent={row[7]};"
+        )
+        logger.info(message)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
